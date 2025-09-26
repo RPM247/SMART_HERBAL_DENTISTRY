@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Oral Inflammation Prediction</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; }
+        .header { background-color: #005f73; color: white; padding: 20px; text-align: center; font-size: 28px; }
+        .container { max-width: 600px; margin: 40px auto; background-color: white; padding: 30px 40px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #001219; }
+        p.description { text-align: center; color: #555; font-size: 14px; margin-bottom: 25px; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        input, select { width: 100%; padding: 12px; margin: 6px 0; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+        
+        .button-group { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        /* Style both button and a tags similarly */
+        button, a.clear-btn {
+            color: white;
+            padding: 14px;
+            width: 100%;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-align: center;
+            text-decoration: none;
+            box-sizing: border-box; /* Ensures padding is included in width */
+        }
+        .predict-btn { background-color: #005f73; }
+        .predict-btn:hover { background-color: #0a9396; }
+        a.clear-btn { background-color: #6c757d; }
+        a.clear-btn:hover { background-color: #5a6268; }
+
+        .results { margin-top: 30px; text-align: center; padding: 20px; background-color: #e9d8a6; border-radius: 8px; border: 1px solid #ee9b00; }
+        .results h3 { margin-top: 0; color: #9b2226; }
+        .results p { font-size: 18px; color: #001219; margin: 8px 0; }
+    </style>
+</head>
+<body>
+
+    <div class="header">Smart Herbal Dentistry 🩺</div>
+
+    <div class="container">
+        <h2>Inflammation Severity Prediction</h2>
+        <p class="description">Enter patient biometrics to predict oral health status and inflammation markers.</p>
+
+        <form action="/predict" method="POST">
+            <div class="form-grid">
+                <input type="number" name="age" placeholder="Age" required value="{{ request.form.get('age', '') }}">
+                
+                <select name="gender" required>
+                    <option value="" disabled {% if not request.form.get('gender') %}selected{% endif %}>Select Gender</option>
+                    <option value="Male" {% if request.form.get('gender') == 'Male' %}selected{% endif %}>Male</option>
+                    <option value="Female" {% if request.form.get('gender') == 'Female' %}selected{% endif %}>Female</option>
+                </select>
+                
+                <select name="diabetic_status" required>
+                    <option value="" disabled {% if not request.form.get('diabetic_status') %}selected{% endif %}>Select Diabetic Status</option>
+                    <option value="Non-diabetic" {% if request.form.get('diabetic_status') == 'Non-diabetic' %}selected{% endif %}>Non-diabetic</option>
+                    <option value="T2DM" {% if request.form.get('diabetic_status') == 'T2DM' %}selected{% endif %}>T2DM</option>
+                </select>
+                
+                <input type="number" name="oral_temp" step="any" placeholder="Oral Temp (°C)" required value="{{ request.form.get('oral_temp', '') }}">
+                <input type="number" name="salivary_ph" step="any" placeholder="Salivary pH" required value="{{ request.form.get('salivary_ph', '') }}">
+                <input type="number" name="il1b" step="any" placeholder="IL-1β (ng/ml)" required value="{{ request.form.get('il1b', '') }}">
+                <input type="number" name="tnf" step="any" placeholder="TNF-α (ng/ml)" required value="{{ request.form.get('tnf', '') }}">
+                <input type="number" name="hemoglobin" step="any" placeholder="Hemoglobin (g/dL)" required value="{{ request.form.get('hemoglobin', '') }}">
+                <input type="number" name="albumin" step="any" placeholder="Albumin (g/dL)" required value="{{ request.form.get('albumin', '') }}">
+                <input type="number" name="bacterial_growth" step="any" placeholder="Bacterial Growth (RLU)" required value="{{ request.form.get('bacterial_growth', '') }}">
+            </div>
+
+            <div class="button-group">
+                <a href="/" class="clear-btn">Clear</a>
+                <button type="submit" class="predict-btn">Predict</button>
+            </div>
+        </form>
+
+        {% if prediction_group %}
+            <div class="results">
+                <h3>Prediction Results</h3>
+                <p>{{ prediction_group }}</p>
+                <p>{{ prediction_mmp8 }}</p>
+                <p>{{ prediction_score }}</p>
+                <p style="color: #007f5f; font-weight: bold;">{{ prediction_dosage }}</p>
+            </div>
+        {% endif %}
+    </div>
+
+</body>
+</html>
